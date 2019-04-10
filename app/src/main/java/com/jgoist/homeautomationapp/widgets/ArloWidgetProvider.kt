@@ -10,7 +10,7 @@ import android.widget.RemoteViews
 import com.jgoist.homeautomationapp.R
 
 class ArloWidgetProvider : AppWidgetProvider() {
-    private final val ACTION_CLICK = "ACTION_CLICK";
+    private val ACTION_CLICK = "ACTION_CLICK"
 
     override fun onUpdate(context: Context, appWidgetManager: AppWidgetManager, appWidgetIds: IntArray?) {
         val thisWidget = ComponentName(context, javaClass)

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <shape xmlns:android="http://schemas.android.com/apk/res/android"
-       android:shape="oval">
+       android:shape="rectangle">
     <stroke
             android:width="1dp"
             android:color="@color/white"/>
@@ -8,9 +8,9 @@
             android:angle="135"
             android:endColor="@color/arlo_teal"
             android:startColor="@color/arlo_dark_blue"/>
-    <!--<solid-->
-    <!--android:color="#9b0000"/>-->
-    <size
-            android:width="40dp"
-            android:height="40dp"/>
+    <corners
+            android:bottomLeftRadius="7dp"
+            android:bottomRightRadius="7dp"
+            android:topRightRadius="7dp"
+            android:topLeftRadius="7dp"/>
 </shape>
