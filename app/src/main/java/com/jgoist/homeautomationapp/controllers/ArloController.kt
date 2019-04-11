@@ -102,5 +102,16 @@ class ArloController(context: Context) {
         };
 
         abstract fun next(): BasestationMode
+
+        companion object {
+            fun fromApiName(apiName: String): BasestationMode {
+                return when (apiName) {
+                    Disarmed.apiName -> Disarmed
+                    Armed.apiName -> Armed
+                    Scheduled.apiName -> Scheduled
+                    else -> Unknown
+                }
+            }
+        }
     }
 }
