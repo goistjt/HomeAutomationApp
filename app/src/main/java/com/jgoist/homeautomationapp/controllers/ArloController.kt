@@ -15,6 +15,22 @@ class ArloController(context: Context) {
     private val user = prefs.getString("arloEmail", null)
     private val pw = prefs.getString("arloPassword", null)
 
+    fun cycleMode(): BasestationMode {
+        val loginResponse = login()
+        if (loginResponse == null) return BasestationMode.Unknown
+
+        val currentMode = getBasestationMode(loginResponse["token"] as String)
+        val basestation = getBasestation(loginResponse["token"] as String)
+        if (basestation == null) return BasestationMode.Unknown
+
+        return if setBasestationMode(loginResponse, basestation, currentMode.next()) {
+            currentMode.next()
+        } else {
+            currentMode
+        }
+
+    }
+
     fun login(): JSONObject? {
         if (user == null || pw == null) {
             return null
