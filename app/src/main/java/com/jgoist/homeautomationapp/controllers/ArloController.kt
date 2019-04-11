@@ -57,7 +57,7 @@ class ArloController(context: Context) {
             val data = (resp["data"] as JSONArray)[0] as JSONObject
             val mode = (data["activeModes"] as Array<String> + data["activeSchedules"] as Array<String>)[0]
             return try {
-                BasestationMode.valueOf(mode)
+                BasestationMode.fromApiName(mode)
             } catch (e: NoSuchElementException) {
                 BasestationMode.Unknown
             }
