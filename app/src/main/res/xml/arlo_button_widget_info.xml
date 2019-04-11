@@ -3,7 +3,7 @@
 <appwidget-provider xmlns:android="http://schemas.android.com/apk/res/android"
                     android:initialLayout="@layout/arlo_button_layout"
                     android:minHeight="40dp"
-                    android:minWidth="110dp"
+                    android:minWidth="40dp"
                     android:updatePeriodMillis="300000">
 
 </appwidget-provider>
