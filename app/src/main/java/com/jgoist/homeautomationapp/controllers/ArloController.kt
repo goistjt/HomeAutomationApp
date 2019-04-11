@@ -87,10 +87,20 @@ class ArloController(context: Context) {
         ).jsonObject["success"] as Boolean
     }
 
-    enum class BasestationMode(var apiName: String) {
-        Disarmed("mode0"),
-        Armed("mode1"),
-        Scheduled("schedule.1"),
-        Unknown("unknown")
+    enum class BasestationMode(val apiName: String, val displayName: String) {
+        Disarmed("mode0", "Disarmed") {
+            override fun next() = Armed
+        },
+        Armed("mode1", "Armed") {
+            override fun next() = Scheduled
+        },
+        Scheduled("schedule.1", "Scheduled") {
+            override fun next() = Disarmed
+        },
+        Unknown("unknown", "Unknown") {
+            override fun next() = Disarmed
+        };
+
+        abstract fun next(): BasestationMode
     }
 }
