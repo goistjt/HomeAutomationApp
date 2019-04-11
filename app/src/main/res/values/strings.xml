@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">HomeAutomationApp</string>
+    <string name="preference_file_key">com.jgoist.homeautomationapp.PREFERENCE_FILE_KEY</string>
 </resources>
