@@ -2,8 +2,10 @@ package com.jgoist.homeautomationapp.controllers
 
 import android.content.Context
 import com.jgoist.homeautomationapp.R
+import org.json.JSONArray
 import org.json.JSONObject
 import java.util.*
+import kotlin.NoSuchElementException
 import khttp.get as httpGet
 import khttp.post as httpPost
 
@@ -41,6 +43,28 @@ class ArloController(context: Context) {
         return sequenceOf(resp["data"] as JSONObject).firstOrNull { it["deviceType"] == "basestation" }
     }
 
+    fun getBasestationMode(token: String): BasestationMode {
+        val resp = httpGet(
+            url = "$apiRoot/users/devices/automation/active",
+            headers = mapOf(
+                "Content-Type" to "application/json;charset=UTF-8",
+                "Authorization" to token,
+                "schemaVersion" to "1"
+            )
+        ).jsonObject
+
+        if (resp["success"] as Boolean) {
+            val data = (resp["data"] as JSONArray)[0] as JSONObject
+            val mode = (data["activeModes"] as Array<String> + data["activeSchedules"] as Array<String>)[0]
+            return try {
+                BasestationMode.valueOf(mode)
+            } catch (e: NoSuchElementException) {
+                BasestationMode.Unknown
+            }
+        }
+        return BasestationMode.Unknown
+    }
+
     fun setBasestationMode(loginResponse: JSONObject, basestation: JSONObject, mode: BasestationMode): Boolean {
         return httpPost(
             url = "$apiRoot/users/devices/notify/${basestation["deviceId"]}",
@@ -66,5 +90,7 @@ class ArloController(context: Context) {
     enum class BasestationMode(var apiName: String) {
         Disarmed("mode0"),
         Armed("mode1"),
+        Scheduled("schedule.1"),
+        Unknown("unknown")
     }
 }
