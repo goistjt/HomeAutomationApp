@@ -30,8 +30,8 @@ android {
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
-    implementation 'com.android.support:appcompat-v7:28.0.0' // This is going to complain due to Anko, but it still builds
-    implementation 'com.android.support:design:28.0.0' // This is going to complain due to Anko, but it still builds
+    implementation 'com.android.support:appcompat-v7:28.0.0'
+    implementation 'com.android.support:design:28.0.0'
     implementation 'com.android.support.constraint:constraint-layout:1.1.3'
     implementation "io.karn:khttp-android:0.1.1"
     implementation "org.jetbrains.anko:anko-commons:$anko_version"
