@@ -18,11 +18,9 @@ class ArloWidgetProvider : AppWidgetProvider() {
         val thisWidget = ComponentName(context, javaClass)
         val allWidgetIds = appWidgetManager.getAppWidgetIds(thisWidget)
         val arloController = ArloController(context)
+        val basestationMode = doAsyncResult { arloController.getBasestationMode().displayName }
         allWidgetIds.forEach {
             val remoteViews = RemoteViews(context.packageName, R.layout.arlo_button_layout)
-
-            val basestationMode = doAsyncResult { arloController.getBasestationMode().displayName }
-
             remoteViews.setTextViewText(R.id.arlo_button_text, basestationMode.get())
 
             val intent = Intent(context, javaClass)
