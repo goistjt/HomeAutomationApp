@@ -12,10 +12,10 @@ import khttp.post as httpPost
 import android.util.Log
 
 class ArloController(context: Context) {
-    private val prefs = context.getSharedPreferences(R.string.preference_file_key.toString(), Context.MODE_PRIVATE)
+    private val prefs = context.getSharedPreferences(context.resources.getString(R.string.preference_file_key), Context.MODE_PRIVATE)
     private val apiRoot = "https://arlo.netgear.com/hmsweb"
-    private val user = prefs.getString("arloEmail", null)
-    private val pw = prefs.getString("arloPassword", null)
+    private val user = prefs.getString(context.resources.getString(R.string.arlo_email), null)
+    private val pw = prefs.getString(context.resources.getString(R.string.arlo_pass), null)
 
     fun cycleMode(): BasestationMode {
         try {
