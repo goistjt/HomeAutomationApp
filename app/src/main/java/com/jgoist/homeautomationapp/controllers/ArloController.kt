@@ -66,7 +66,14 @@ class ArloController(context: Context) {
             )
         ).jsonObject
 
-        return sequenceOf(resp["data"] as JSONObject).firstOrNull { it["deviceType"] == "basestation" }
+        val data = resp.getJSONArray("data")
+
+        for (i in 0 until data.length()) {
+            val it = data.getJSONObject(i)
+            if (it["deviceType"] == "basestation") return it
+        }
+
+        return null
     }
 
     fun getBasestationMode(): BasestationMode {
@@ -98,7 +105,7 @@ class ArloController(context: Context) {
                 modes.add(activeModes.getString(i))
             }
             for (i in 0 until activeSchedules.length()) {
-                modes.add(activeModes.getString(i))
+                modes.add(activeSchedules.getString(i))
             }
             val mode = modes.firstOrNull()
             return try {

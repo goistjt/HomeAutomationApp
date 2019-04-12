@@ -5,7 +5,7 @@ enum class BasestationMode(val apiName: String, val displayName: String) {
         override fun next() = Armed
     },
     Armed("mode1", "Armed") {
-        override fun next() = Scheduled
+        override fun next() = Disarmed
     },
     Scheduled("schedule.1", "Scheduled") {
         override fun next() = Disarmed
