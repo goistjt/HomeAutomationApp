@@ -2,6 +2,8 @@ package com.jgoist.homeautomationapp.controllers
 
 import android.content.Context
 import com.jgoist.homeautomationapp.R
+import com.jgoist.homeautomationapp.models.BasestationMode
+import mu.KLogging
 import org.json.JSONArray
 import org.json.JSONObject
 import java.util.*
@@ -10,28 +12,34 @@ import khttp.get as httpGet
 import khttp.post as httpPost
 
 class ArloController(context: Context) {
+    companion object : KLogging()
+
     private val prefs = context.getSharedPreferences(R.string.preference_file_key.toString(), Context.MODE_PRIVATE)
     private val apiRoot = "https://arlo.netgear.com/hmsweb"
     private val user = prefs.getString("arloEmail", null)
     private val pw = prefs.getString("arloPassword", null)
 
     fun cycleMode(): BasestationMode {
-        val loginResponse = login()
-        if (loginResponse == null) return BasestationMode.Unknown
+        try {
+            val loginResponse = login()
+            if (loginResponse == null) return BasestationMode.Unknown
 
-        val currentMode = getBasestationMode(loginResponse["token"] as String)
-        val basestation = getBasestation(loginResponse["token"] as String)
-        if (basestation == null) return BasestationMode.Unknown
+            val currentMode = getBasestationMode(loginResponse["token"] as String)
+            val basestation = getBasestation(loginResponse["token"] as String)
+            if (basestation == null) return BasestationMode.Unknown
 
-        return if setBasestationMode(loginResponse, basestation, currentMode.next()) {
-            currentMode.next()
-        } else {
-            currentMode
+            return if (setBasestationMode(loginResponse, basestation, currentMode.next())) {
+                currentMode.next()
+            } else {
+                currentMode
+            }
+        } catch (e: Exception) {
+            logger.error("Failed to update the Arlo Basestation mode", e)
+            return BasestationMode.Unknown
         }
-
     }
 
-    fun login(): JSONObject? {
+    private fun login(): JSONObject? {
         if (user == null || pw == null) {
             return null
         }
@@ -48,7 +56,7 @@ class ArloController(context: Context) {
         ).jsonObject
     }
 
-    fun getBasestation(token: String): JSONObject? {
+    private fun getBasestation(token: String): JSONObject? {
         val resp = httpGet(
             url = "$apiRoot/users/devices",
             headers = mapOf(
@@ -59,7 +67,7 @@ class ArloController(context: Context) {
         return sequenceOf(resp["data"] as JSONObject).firstOrNull { it["deviceType"] == "basestation" }
     }
 
-    fun getBasestationMode(token: String): BasestationMode {
+    private fun getBasestationMode(token: String): BasestationMode {
         val resp = httpGet(
             url = "$apiRoot/users/devices/automation/active",
             headers = mapOf(
@@ -81,7 +89,7 @@ class ArloController(context: Context) {
         return BasestationMode.Unknown
     }
 
-    fun setBasestationMode(loginResponse: JSONObject, basestation: JSONObject, mode: BasestationMode): Boolean {
+    private fun setBasestationMode(loginResponse: JSONObject, basestation: JSONObject, mode: BasestationMode): Boolean {
         return httpPost(
             url = "$apiRoot/users/devices/notify/${basestation["deviceId"]}",
             headers = mapOf(
@@ -103,31 +111,5 @@ class ArloController(context: Context) {
         ).jsonObject["success"] as Boolean
     }
 
-    enum class BasestationMode(val apiName: String, val displayName: String) {
-        Disarmed("mode0", "Disarmed") {
-            override fun next() = Armed
-        },
-        Armed("mode1", "Armed") {
-            override fun next() = Scheduled
-        },
-        Scheduled("schedule.1", "Scheduled") {
-            override fun next() = Disarmed
-        },
-        Unknown("unknown", "Unknown") {
-            override fun next() = Disarmed
-        };
 
-        abstract fun next(): BasestationMode
-
-        companion object {
-            fun fromApiName(apiName: String): BasestationMode {
-                return when (apiName) {
-                    Disarmed.apiName -> Disarmed
-                    Armed.apiName -> Armed
-                    Scheduled.apiName -> Scheduled
-                    else -> Unknown
-                }
-            }
-        }
-    }
 }
