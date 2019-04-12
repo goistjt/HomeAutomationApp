@@ -8,6 +8,7 @@ import android.content.Context
 import android.content.Intent
 import android.widget.RemoteViews
 import com.jgoist.homeautomationapp.R
+import com.jgoist.homeautomationapp.controllers.ArloController
 
 class ArloWidgetProvider : AppWidgetProvider() {
     private val ACTION_CLICK = "ACTION_CLICK"
@@ -15,9 +16,10 @@ class ArloWidgetProvider : AppWidgetProvider() {
     override fun onUpdate(context: Context, appWidgetManager: AppWidgetManager, appWidgetIds: IntArray?) {
         val thisWidget = ComponentName(context, javaClass)
         val allWidgetIds = appWidgetManager.getAppWidgetIds(thisWidget)
+        val arloController = ArloController(context)
         allWidgetIds.forEach {
             val remoteViews = RemoteViews(context.packageName, R.layout.arlo_button_layout)
-            remoteViews.setTextViewText(R.id.arlo_button_text, "TODO")
+            remoteViews.setTextViewText(R.id.arlo_button_text, arloController.getBasestationMode().displayName)
 
             val intent = Intent(context, javaClass)
             intent.action = AppWidgetManager.ACTION_APPWIDGET_UPDATE

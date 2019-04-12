@@ -3,17 +3,15 @@ package com.jgoist.homeautomationapp.controllers
 import android.content.Context
 import com.jgoist.homeautomationapp.R
 import com.jgoist.homeautomationapp.models.BasestationMode
-import mu.KLogging
 import org.json.JSONArray
 import org.json.JSONObject
 import java.util.*
 import kotlin.NoSuchElementException
 import khttp.get as httpGet
 import khttp.post as httpPost
+import android.util.Log
 
 class ArloController(context: Context) {
-    companion object : KLogging()
-
     private val prefs = context.getSharedPreferences(R.string.preference_file_key.toString(), Context.MODE_PRIVATE)
     private val apiRoot = "https://arlo.netgear.com/hmsweb"
     private val user = prefs.getString("arloEmail", null)
@@ -34,7 +32,7 @@ class ArloController(context: Context) {
                 currentMode
             }
         } catch (e: Exception) {
-            logger.error("Failed to update the Arlo Basestation mode", e)
+            Log.e(javaClass.simpleName, "Failed to update the Arlo Basestation mode", e)
             return BasestationMode.Unknown
         }
     }
@@ -67,7 +65,17 @@ class ArloController(context: Context) {
         return sequenceOf(resp["data"] as JSONObject).firstOrNull { it["deviceType"] == "basestation" }
     }
 
-    fun getBasestationMode(token: String): BasestationMode {
+    fun getBasestationMode(): BasestationMode {
+        try {
+            val loginResp = login() ?: return BasestationMode.Unknown
+            return getBasestationMode(loginResp["token"] as String)
+        } catch (e: Exception) {
+            Log.e(javaClass.simpleName, "Unable to get the current basestation mode", e)
+            return BasestationMode.Unknown
+        }
+    }
+
+    private fun getBasestationMode(token: String): BasestationMode {
         val resp = httpGet(
             url = "$apiRoot/users/devices/automation/active",
             headers = mapOf(
