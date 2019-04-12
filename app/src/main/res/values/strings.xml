@@ -7,4 +7,6 @@
     <string name="prompt_password">Password</string>
     <string name="store_cred_button_text">Store Credentials</string>
     <string name="clear_cred_button_text">Clear Credentials</string>
+    <string name="arlo_email">arloEmail</string>
+    <string name="arlo_pass">arloPassword</string>
 </resources>
