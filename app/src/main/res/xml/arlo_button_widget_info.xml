@@ -1,9 +1,8 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--https://developer.android.com/guide/practices/ui_guidelines/widget_design#anatomy_determining_size-->
+<?xml version="1.0" encoding="utf-8"?><!--https://developer.android.com/guide/practices/ui_guidelines/widget_design#anatomy_determining_size-->
 <appwidget-provider xmlns:android="http://schemas.android.com/apk/res/android"
-                    android:initialLayout="@layout/arlo_button_layout"
-                    android:minHeight="40dp"
-                    android:minWidth="40dp"
-                    android:updatePeriodMillis="300000">
+    android:initialLayout="@layout/arlo_button_layout"
+    android:minHeight="40dp"
+    android:minWidth="40dp"
+    android:updatePeriodMillis="300000">
 
 </appwidget-provider>

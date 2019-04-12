@@ -67,7 +67,7 @@ class ArloController(context: Context) {
         return sequenceOf(resp["data"] as JSONObject).firstOrNull { it["deviceType"] == "basestation" }
     }
 
-    private fun getBasestationMode(token: String): BasestationMode {
+    fun getBasestationMode(token: String): BasestationMode {
         val resp = httpGet(
             url = "$apiRoot/users/devices/automation/active",
             headers = mapOf(
