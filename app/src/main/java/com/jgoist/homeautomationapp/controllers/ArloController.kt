@@ -10,9 +10,11 @@ import kotlin.NoSuchElementException
 import khttp.get as httpGet
 import khttp.post as httpPost
 import android.util.Log
+import kotlin.collections.ArrayList
 
 class ArloController(context: Context) {
-    private val prefs = context.getSharedPreferences(context.resources.getString(R.string.preference_file_key), Context.MODE_PRIVATE)
+    private val prefs =
+        context.getSharedPreferences(context.resources.getString(R.string.preference_file_key), Context.MODE_PRIVATE)
     private val apiRoot = "https://arlo.netgear.com/hmsweb"
     private val user = prefs.getString(context.resources.getString(R.string.arlo_email), null)
     private val pw = prefs.getString(context.resources.getString(R.string.arlo_pass), null)
@@ -38,6 +40,8 @@ class ArloController(context: Context) {
     }
 
     private fun login(): JSONObject? {
+//        Log.d(javaClass.simpleName, user)
+//        Log.d(javaClass.simpleName, pw)
         if (user == null || pw == null) {
             return null
         }
@@ -51,7 +55,7 @@ class ArloController(context: Context) {
                 "email" to user,
                 "password" to pw
             )
-        ).jsonObject
+        ).jsonObject["data"] as JSONObject
     }
 
     private fun getBasestation(token: String): JSONObject? {
@@ -87,9 +91,18 @@ class ArloController(context: Context) {
 
         if (resp["success"] as Boolean) {
             val data = (resp["data"] as JSONArray)[0] as JSONObject
-            val mode = (data["activeModes"] as Array<String> + data["activeSchedules"] as Array<String>)[0]
+            val modes = ArrayList<String>()
+            val activeModes = data["activeModes"] as JSONArray
+            val activeSchedules = data["activeSchedules"] as JSONArray
+            for (i in 0 until activeModes.length()) {
+                modes.add(activeModes.getString(i))
+            }
+            for (i in 0 until activeSchedules.length()) {
+                modes.add(activeModes.getString(i))
+            }
+            val mode = modes.firstOrNull()
             return try {
-                BasestationMode.fromApiName(mode)
+                BasestationMode.fromApiName(mode ?: "")
             } catch (e: NoSuchElementException) {
                 BasestationMode.Unknown
             }

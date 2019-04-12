@@ -9,6 +9,7 @@ import android.content.Intent
 import android.widget.RemoteViews
 import com.jgoist.homeautomationapp.R
 import com.jgoist.homeautomationapp.controllers.ArloController
+import org.jetbrains.anko.doAsyncResult
 
 class ArloWidgetProvider : AppWidgetProvider() {
     private val ACTION_CLICK = "ACTION_CLICK"
@@ -19,7 +20,10 @@ class ArloWidgetProvider : AppWidgetProvider() {
         val arloController = ArloController(context)
         allWidgetIds.forEach {
             val remoteViews = RemoteViews(context.packageName, R.layout.arlo_button_layout)
-            remoteViews.setTextViewText(R.id.arlo_button_text, arloController.getBasestationMode().displayName)
+
+            val basestationMode = doAsyncResult { arloController.getBasestationMode().displayName }
+
+            remoteViews.setTextViewText(R.id.arlo_button_text, basestationMode.get())
 
             val intent = Intent(context, javaClass)
             intent.action = AppWidgetManager.ACTION_APPWIDGET_UPDATE
